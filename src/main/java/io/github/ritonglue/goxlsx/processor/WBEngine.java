@@ -488,8 +488,14 @@ public class WBEngine<T> {
 					} else if (dbData != null) {
 						throw new RuntimeException();
 					}
-					CellStyle style = context.getStyle(a.getFormat());
-					cell.setCellStyle(style);
+					String format = a.getFormat();
+					if(format != null && !format.isEmpty()) {
+						CellStyle style = context.getStyle(format);
+						if(style == null) {
+							throw new RuntimeException(String.format("missing style format '%s'", format));
+						}
+						cell.setCellStyle(style);
+					}
 				}
 
 				if(postPersist != null) {
