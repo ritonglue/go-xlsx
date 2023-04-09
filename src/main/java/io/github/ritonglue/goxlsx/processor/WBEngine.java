@@ -305,13 +305,25 @@ public class WBEngine<T> {
 		return stream::iterator;
 	}
 
-	public Stream<T> parseAsStream(Sheet sheet) throws IOException {
+	public Stream<T> parseAsStream(Sheet sheet) {
 		Iterator<Row> iterator = sheet.iterator();
 		Function<AnnotationStorer, Integer> getterIndex = getterIndex(iterator);
 		Iterable<Row> iterable = () -> iterator;
 		return streamOf(iterable)
 				.filter(Objects::nonNull)
 				.map(o -> convert(o, getterIndex));
+	}
+
+	public Stream<T> parseAsStream(Iterable<Row> iterable) {
+		Iterator<Row> iterator = iterable.iterator();
+		Function<AnnotationStorer, Integer> getterIndex = getterIndex(iterator);
+		return streamOf(iterable)
+				.filter(Objects::nonNull)
+				.map(o -> convert(o, getterIndex));
+	}
+
+	public Iterable<T> parse(Iterable<Row> iterable) throws IOException {
+		return iterableOf(parseAsStream(iterable));
 	}
 
 	public Iterable<T> parse(Sheet sheet) throws IOException {
