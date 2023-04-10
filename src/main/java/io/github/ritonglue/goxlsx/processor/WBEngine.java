@@ -23,6 +23,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.TreeMap;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Stream;
@@ -49,6 +50,7 @@ import io.github.ritonglue.goxlsx.convert.EnumConverter;
 public class WBEngine<T> {
 	private final Mode mode;
 	private final Class<T> clazz;
+	private final boolean ignoreHeaderCase;
 	private final List<AnnotationStorer> storers = new ArrayList<>();
 	private final Map<Class<?>, AttributeConverter<?,?>> converters;
 	private final Map<CallbackEnum, Consumer<? super T>> callbacks = new EnumMap<>(CallbackEnum.class);
@@ -56,9 +58,11 @@ public class WBEngine<T> {
 	public static class Builder<T> {
 		private Mode mode;
 		private Class<T> clazz;
+		private boolean ignoreHeaderCase;
 		private Map<Class<?>, AttributeConverter<?,?>> converters;
 
 		public Builder<T> mode(Mode mode) {this.mode = mode; return this;}
+		public Builder<T> ignoreHeaderCase(boolean ignoreHeaderCase) {this.ignoreHeaderCase = ignoreHeaderCase; return this;}
 		public Builder<T> clazz(Class<T> clazz) {this.clazz = clazz; return this;}
 		public Builder<T> register(Map<Class<?>, AttributeConverter<?,?>> converters) {this.converters = converters; return this;}
 		public <U> Builder<T> register(Class<U> clazz, Class<? extends AttributeConverter<U,?>> converterClazz) {
@@ -87,6 +91,7 @@ public class WBEngine<T> {
 	private WBEngine(Builder<T> b) {
 		this.mode = Objects.requireNonNull(b.mode, "mode null");
 		this.clazz = Objects.requireNonNull(b.clazz, "clazz null");
+		this.ignoreHeaderCase = b.ignoreHeaderCase;
 		this.converters = new HashMap<>();
 		this.converters.putAll(DefaultConverters.getConverters());
 		//replace or add new converters
@@ -94,6 +99,10 @@ public class WBEngine<T> {
 			this.converters.putAll(b.converters);
 		}
 		init();
+	}
+
+	public boolean isIgnoreHeaderCase() {
+		return ignoreHeaderCase;
 	}
 
 	/**
@@ -330,12 +339,18 @@ public class WBEngine<T> {
 		return iterableOf(parseAsStream(sheet));
 	}
 
-	private Function<AnnotationStorer, Integer> getterIndex(Iterator<Row> iterator) {
+	private Map<String, Integer> createEmptyHeaderMap() {
+		return this.isIgnoreHeaderCase() ?
+			new TreeMap<>(String.CASE_INSENSITIVE_ORDER) :
+			new HashMap<>();
+	}
+
+		private Function<AnnotationStorer, Integer> getterIndex(Iterator<Row> iterator) {
 		Function<AnnotationStorer, Integer> getterIndex = null;
 		switch(mode) {
 		case NAMED:
 			//build headerMap
-			Map<String, Integer> headerMap = new HashMap<>();
+			Map<String, Integer> headerMap = this.createEmptyHeaderMap();
 			if(iterator.hasNext()) {
 				Row row = iterator.next();
 				int n = 0;
@@ -485,12 +500,12 @@ public class WBEngine<T> {
 						cell.setCellValue((String) dbData);
 					} else if(dbData instanceof Number) {
 						cell.setCellValue(((Number) dbData).doubleValue());
+					} else if(dbData instanceof LocalDateTime) {
+						cell.setCellValue((LocalDateTime) dbData);
 					} else if(dbData instanceof Boolean) {
 						cell.setCellValue(((Boolean) dbData));
 					} else if(dbData instanceof LocalDate) {
 						cell.setCellValue((LocalDate) dbData);
-					} else if(dbData instanceof LocalDateTime) {
-						cell.setCellValue((LocalDateTime) dbData);
 					} else if(dbData instanceof Date) {
 						cell.setCellValue((Date) dbData);
 					} else if(dbData instanceof Calendar) {
@@ -520,19 +535,18 @@ public class WBEngine<T> {
 	}
 
 	public void write(Iterable<? extends T> iterable, Sheet sheet, WBContext context) throws IOException {
+		if(context == null) context = new WBContext();
 		int nrow = 0;
 		if(mode == Mode.NAMED) {
 			Row row = sheet.createRow(nrow++);
 			int i = 0;
-			String s = context.getHeaderStyle();
-			CellStyle headerStyle = context.getStyle(s);
+			CellStyle headerStyle = context.getStyle(context.getHeaderStyle());
 			int n = 0;
 			for(AnnotationStorer storer : storers) {
 				String header = storer.getHeader();
 				Cell cell = row.createCell(i++);
 				cell.setCellValue(header);
-				s = storer.getHeaderStyle();
-				CellStyle style = context.getStyle(s);
+				CellStyle style = context.getStyle(storer.getHeaderStyle());
 				if(style == null) {
 					//no style per column : apply general style
 					style = headerStyle;
