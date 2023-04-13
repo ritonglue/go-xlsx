@@ -36,6 +36,7 @@ import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
 
 import io.github.ritonglue.goxlsx.annotation.Access;
@@ -54,6 +55,11 @@ public class WBEngine<T> {
 	private final List<AnnotationStorer> storers = new ArrayList<>();
 	private final Map<Class<?>, AttributeConverter<?,?>> converters;
 	private final Map<CallbackEnum, Consumer<? super T>> callbacks = new EnumMap<>(CallbackEnum.class);
+
+	public final static String DATE_FORMAT = "yyyy-mm-dd";
+	public final static String DATE_TIME_FORMAT = "yyyy-mm-dd hh:mm:ss";
+	public final static String DATE_FORMAT_KEY= "localDate";
+	public final static String DATE_TIME_FORMAT_KEY = "localDateTime";
 
 	public static class Builder<T> {
 		private Mode mode;
@@ -502,13 +508,17 @@ public class WBEngine<T> {
 					}
 					@SuppressWarnings("unchecked")
 					Object dbData = converter.convertToDatabaseColumn(value);
+					boolean isDate = false;
+					boolean isDateTime = false;
 					if(dbData instanceof String) {
 						cell.setCellValue((String) dbData);
 					} else if(dbData instanceof Number) {
 						cell.setCellValue(((Number) dbData).doubleValue());
 					} else if(dbData instanceof LocalDate) {
+						isDate = true;
 						cell.setCellValue((LocalDate) dbData);
 					} else if(dbData instanceof LocalDateTime) {
+						isDateTime = true;
 						cell.setCellValue((LocalDateTime) dbData);
 					} else if(dbData instanceof Boolean) {
 						cell.setCellValue(((Boolean) dbData));
@@ -522,11 +532,37 @@ public class WBEngine<T> {
 						throw new RuntimeException();
 					}
 					String format = a.getFormat();
+					CellStyle style = null;
+					String key = null;
+					String dateFormat = null;
 					if(format != null && !format.isEmpty()) {
-						CellStyle style = context.getStyle(format);
+						style = context.getStyle(format);
 						if(style == null) {
-							throw new RuntimeException(String.format("missing style format '%s'", format));
+							throw new RuntimeException(
+								String.format("missing style format '%s'. header '%s', order %s"
+									, format, a.getHeader(), a.getOrder()));
 						}
+					} else if(isDate) {
+						//auto apply date format
+						key = DATE_FORMAT_KEY;
+						dateFormat = DATE_FORMAT;
+					} else if (isDateTime) {
+						//auto apply dateTime format
+						key = DATE_TIME_FORMAT_KEY;
+						dateFormat = DATE_TIME_FORMAT;
+					}
+
+					if(key != null) {
+						style = context.getStyle(key);
+						if(style == null) {
+							Workbook wb = sheet.getWorkbook();
+							style = wb.createCellStyle();
+							style.setDataFormat(wb.createDataFormat().getFormat(dateFormat));
+							context.putStyle(key, style);
+						}
+					}
+
+					if(style != null) {
 						cell.setCellStyle(style);
 					}
 				}
