@@ -449,6 +449,12 @@ public class WBEngine<T> {
 		case _NONE:
 			break;
 		}
+		if(LocalDate.class.equals(storer.getClazz())) {
+			if(value instanceof LocalDateTime) {
+				LocalDateTime tmp = (LocalDateTime) value;
+				value = tmp.toLocalDate();
+			}
+		}
 		@SuppressWarnings("unchecked")
 		Object object = converter.convertToEntityAttribute(value);
 		try {
@@ -500,12 +506,12 @@ public class WBEngine<T> {
 						cell.setCellValue((String) dbData);
 					} else if(dbData instanceof Number) {
 						cell.setCellValue(((Number) dbData).doubleValue());
+					} else if(dbData instanceof LocalDate) {
+						cell.setCellValue((LocalDate) dbData);
 					} else if(dbData instanceof LocalDateTime) {
 						cell.setCellValue((LocalDateTime) dbData);
 					} else if(dbData instanceof Boolean) {
 						cell.setCellValue(((Boolean) dbData));
-					} else if(dbData instanceof LocalDate) {
-						cell.setCellValue((LocalDate) dbData);
 					} else if(dbData instanceof Date) {
 						cell.setCellValue((Date) dbData);
 					} else if(dbData instanceof Calendar) {

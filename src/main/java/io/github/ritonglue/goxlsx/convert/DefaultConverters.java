@@ -35,8 +35,8 @@ public class DefaultConverters {
 		map.put(String.class, new IdentityConverter<String>());
 		map.put(Currency.class, new CurrencyConverter());
 
-		map.put(LocalDate.class, new LocalDateConverter());
 		map.put(LocalDateTime.class, new IdentityConverter<LocalDateTime>());
+		map.put(LocalDate.class, new IdentityConverter<LocalDate>());
 
 		MAP = Collections.unmodifiableMap(map);
 	}
