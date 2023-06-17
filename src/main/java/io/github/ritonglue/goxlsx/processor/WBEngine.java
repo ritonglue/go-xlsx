@@ -583,7 +583,6 @@ public class WBEngine<T> {
 			Row row = sheet.createRow(nrow++);
 			int i = 0;
 			CellStyle headerStyle = context.getStyle(context.getHeaderStyle());
-			int n = 0;
 			for(AnnotationStorer storer : storers) {
 				String header = storer.getHeader();
 				Cell cell = row.createCell(i++);
@@ -596,17 +595,16 @@ public class WBEngine<T> {
 				if(style != null) {
 					cell.setCellStyle(style);
 				}
-				++n;
 			}
-			if(n > 0 && context.isApplyFilter()) {
-				sheet.setAutoFilter(new CellRangeAddress(0, 0, 0, n-1));
+			if(i > 0 && context.isApplyFilter()) {
+				sheet.setAutoFilter(new CellRangeAddress(0, 0, 0, i-1));
 			}
 		}
 
 		int n = 0;
 		for(AnnotationStorer storer : storers) {
 			int width = storer.getWidth();
-			sheet.setColumnWidth(n, width * 256);
+			sheet.setColumnWidth(n++, width * 256);
 		}
 
 		writeImpl(iterable, sheet, context, nrow);
