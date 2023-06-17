@@ -6,10 +6,15 @@ package io.github.ritonglue.goxlsx.convert;
  * </p>
  */
 
-public abstract class NumberConverter<X extends Number> implements AttributeConverter<X, Number> {
+public class NumberConverter<X extends Number> implements AttributeConverter<X, Number> {
 
 	@Override
 	public Number convertToDatabaseColumn(X attribute) {
 		return attribute;
+	}
+
+	@Override
+	public X convertToEntityAttribute(Number dbData) {
+		throw new UnsupportedOperationException();
 	}
 }
