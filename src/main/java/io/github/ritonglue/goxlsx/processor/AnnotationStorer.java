@@ -18,6 +18,7 @@ public class AnnotationStorer {
 	private final Method setter;
 	private final int width;
 	private final String headerStyle;
+	private final boolean isHidden;
 
 	public AnnotationStorer(Field field, Data d) {
 		this(null, field, d);
@@ -48,6 +49,7 @@ public class AnnotationStorer {
 		this.format = d.getFormat();
 		this.headerStyle = d.getHeaderStyle();
 		this.width = d.getWidth();
+		this.isHidden = d.isHidden();
 	}
 
 	public Field getField() {
@@ -88,5 +90,9 @@ public class AnnotationStorer {
 
 	public String getHeaderStyle() {
 		return headerStyle;
+	}
+
+	public boolean isHidden() {
+		return isHidden;
 	}
 }

@@ -164,6 +164,8 @@ public class WBEngine<T> {
 	private Data getData(AccessibleObject o, String name, Class<?> type) throws ReflectiveOperationException {
 		if(o == null) return null;
 		int order = 0;
+		int width = 0;
+		boolean isHidden = false;
 		String header = name;
 		String format = "";
 		AttributeConverter<?,?> converter = null;
@@ -174,6 +176,8 @@ public class WBEngine<T> {
 			WBBinding binding = o.getAnnotation(WBBinding.class);
 			order = binding.order();
 			header = binding.header();
+			width = binding.width();
+			isHidden = binding.hidden();
 		}
 		if(header == null || header.isEmpty()) {
 			header = name;
@@ -207,6 +211,8 @@ public class WBEngine<T> {
 		data.setConverter(converter);
 		data.setHeader(header);
 		data.setFormat(format);
+		data.setWidth(width);
+		data.setHidden(isHidden);
 		return data;
 	}
 
@@ -604,7 +610,11 @@ public class WBEngine<T> {
 		int n = 0;
 		for(AnnotationStorer storer : storers) {
 			int width = storer.getWidth();
-			sheet.setColumnWidth(n++, width * 256);
+			if(width > 0) {
+				sheet.setColumnWidth(n, width * 256);
+			}
+			sheet.setColumnHidden(n, storer.isHidden());
+			++n;
 		}
 
 		writeImpl(iterable, sheet, context, nrow);
