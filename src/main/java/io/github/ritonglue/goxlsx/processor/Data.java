@@ -9,6 +9,17 @@ public class Data {
 	private String format;
 	private String headerStyle;
 	private int width;
+	private boolean isHidden;
+
+	Data() {}
+
+	public boolean isHidden() {
+		return isHidden;
+	}
+
+	public void setHidden(boolean isHidden) {
+		this.isHidden = isHidden;
+	}
 
 	public String getHeaderStyle() {
 		return headerStyle;
@@ -25,8 +36,6 @@ public class Data {
 	public void setWidth(int width) {
 		this.width = width;
 	}
-
-	Data() {}
 
 	public AttributeConverter<?,?> getConverter() {
 		return converter;

@@ -36,4 +36,9 @@ public @interface WBBinding {
 	 * @return The header style of the column
 	 */
 	String style() default "";
+
+    /**
+     * Set the visibility state for a given column
+     */
+	boolean hidden() default false;
 }
