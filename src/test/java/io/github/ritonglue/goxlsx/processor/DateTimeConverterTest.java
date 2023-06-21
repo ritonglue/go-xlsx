@@ -15,7 +15,7 @@ import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
-import org.apache.poi.xssf.streaming.SXSSFWorkbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.Test;
 
 import io.github.ritonglue.goxlsx.annotation.Convert;
@@ -26,7 +26,7 @@ public class DateTimeConverterTest {
 	public void testLocalDate() throws IOException {
 		LocalDate date = LocalDate.of(1974, Month.APRIL, 14);
 		try(ByteArrayOutputStream os = new ByteArrayOutputStream();
-			Workbook wb = new SXSSFWorkbook()) {
+			Workbook wb = new XSSFWorkbook()) {
 			Sheet sheet = wb.createSheet();
 			WBEngine<P1> engine = WBEngine.builder(P1.class).mode(Mode.ORDER).build();
 			P1 p = new P1();
@@ -70,7 +70,7 @@ public class DateTimeConverterTest {
 	public void testLocalDateTime() throws IOException {
 		LocalDateTime date = LocalDateTime.of(1974, Month.APRIL, 14, 10, 59, 59);
 		try(ByteArrayOutputStream os = new ByteArrayOutputStream();
-			Workbook wb = new SXSSFWorkbook()) {
+			Workbook wb = new XSSFWorkbook()) {
 			Sheet sheet = wb.createSheet();
 			WBEngine<P2> engine = WBEngine.builder(P2.class).mode(Mode.ORDER).build();
 			P2 p = new P2();
@@ -114,7 +114,7 @@ public class DateTimeConverterTest {
 	public void testLocalDateNoFormat() throws IOException {
 		LocalDate date = LocalDate.of(1974, Month.APRIL, 14);
 		try(ByteArrayOutputStream os = new ByteArrayOutputStream();
-			Workbook wb = new SXSSFWorkbook()) {
+			Workbook wb = new XSSFWorkbook()) {
 			Sheet sheet = wb.createSheet();
 			WBEngine<P3> engine = WBEngine.builder(P3.class).mode(Mode.ORDER).build();
 			P3 p = new P3();
@@ -157,7 +157,7 @@ public class DateTimeConverterTest {
 	public void testLocalDateTimeNoFormat() throws IOException {
 		LocalDateTime date = LocalDateTime.of(1974, Month.APRIL, 14, 10, 59, 59);
 		try(ByteArrayOutputStream os = new ByteArrayOutputStream();
-			Workbook wb = new SXSSFWorkbook()) {
+			Workbook wb = new XSSFWorkbook()) {
 			Sheet sheet = wb.createSheet();
 			WBEngine<P4> engine = WBEngine.builder(P4.class).mode(Mode.ORDER).build();
 			P4 p = new P4();

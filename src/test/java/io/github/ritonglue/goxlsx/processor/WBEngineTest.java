@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
-import org.apache.poi.xssf.streaming.SXSSFWorkbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.Test;
 
 import io.github.ritonglue.goxlsx.annotation.WBBinding;
@@ -54,7 +54,7 @@ public class WBEngineTest {
 		p.setCurrency(Currency.getInstance("USD"));
 
 		try(ByteArrayOutputStream os = new ByteArrayOutputStream();
-			Workbook wb = new SXSSFWorkbook()) {
+			Workbook wb = new XSSFWorkbook()) {
 			Sheet sheet = wb.createSheet();
 			WBEngine<Pojo> engine = WBEngine.builder(Pojo.class).mode(Mode.ORDER).build();
 			engine.write(List.of(p), sheet, null);
