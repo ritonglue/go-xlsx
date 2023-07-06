@@ -623,4 +623,30 @@ public class WBEngine<T> {
 	public Mode getMode() {
 		return mode;
 	}
+
+	public int getNumberOfColumns() {
+		return this.storers.size();
+	}
+
+	/**
+	 * Adjusts the columns width to fit the contents
+	 *
+	 * @param sheet
+	 * @param useMergedCells whether to use the contents of merged cells when calculating the width of the column
+	 */
+	public void autoSizeColumn(Sheet sheet, boolean useMergedCells) {
+		if(sheet == null) return;
+		for(int i = 0, n = getNumberOfColumns() ; i < n ; ++i) {
+			sheet.autoSizeColumn(i, useMergedCells);
+		}
+	}
+
+	/**
+	 * Adjusts the columns width to fit the contents
+	 *
+	 * @param sheet the sheet to apply autoSize
+	 */
+	public void autoSizeColumn(Sheet sheet) {
+		this.autoSizeColumn(sheet, false);
+	}
 }
