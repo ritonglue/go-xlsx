@@ -167,6 +167,7 @@ public class WBEngine<T> {
 		int width = 0;
 		boolean isHidden = false;
 		String header = name;
+		String header2 = null;
 		String format = "";
 		AttributeConverter<?,?> converter = null;
 		if(o.isAnnotationPresent(Transient.class)) {
@@ -176,6 +177,7 @@ public class WBEngine<T> {
 			WBBinding binding = o.getAnnotation(WBBinding.class);
 			order = binding.order();
 			header = binding.header();
+			header2 = binding.header2();
 			width = binding.width();
 			isHidden = binding.hidden();
 		}
@@ -210,6 +212,7 @@ public class WBEngine<T> {
 		data.setOrder(order);
 		data.setConverter(converter);
 		data.setHeader(header);
+		data.setHeader2(header2);
 		data.setFormat(format);
 		data.setWidth(width);
 		data.setHidden(isHidden);
@@ -589,8 +592,13 @@ public class WBEngine<T> {
 			Row row = sheet.createRow(nrow++);
 			int i = 0;
 			CellStyle headerStyle = context.getStyle(context.getHeaderStyle());
+			boolean hasHeader2 = false;
 			for(AnnotationStorer storer : storers) {
 				String header = storer.getHeader();
+				String header2 = storer.getHeader2();
+				if(!hasHeader2) {
+					hasHeader2 = header2 != null;
+				}
 				Cell cell = row.createCell(i++);
 				cell.setCellValue(header);
 				CellStyle style = context.getStyle(storer.getHeaderStyle());
@@ -600,6 +608,23 @@ public class WBEngine<T> {
 				}
 				if(style != null) {
 					cell.setCellStyle(style);
+				}
+			}
+			if(hasHeader2) {
+				row = sheet.createRow(nrow++);
+				i = 0;
+				for(AnnotationStorer storer : storers) {
+					String header2 = storer.getHeader2();
+					Cell cell = row.createCell(i++);
+					cell.setCellValue(header2);
+					CellStyle style = context.getStyle(storer.getHeaderStyle());
+					if(style == null) {
+						//no style per column : apply general style
+						style = headerStyle;
+					}
+					if(style != null) {
+						cell.setCellStyle(style);
+					}
 				}
 			}
 			if(i > 0 && context.isApplyFilter()) {

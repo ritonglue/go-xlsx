@@ -19,6 +19,12 @@ public @interface WBBinding {
 	String header() default "";
 
 	/**
+	 * Determines the second header name of the column
+	 * @return The value in the spreadsheet where of second header name is this value.
+	 */
+	String header2() default "";
+
+	/**
 	 * Determines the order of the column
 	 * In Mode.NAMED, it determines the order of the column during writing.
 	 * @return The value on the row of this position.

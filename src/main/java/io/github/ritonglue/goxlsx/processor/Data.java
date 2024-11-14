@@ -5,6 +5,7 @@ import io.github.ritonglue.goxlsx.convert.AttributeConverter;
 public class Data {
 	private AttributeConverter<?,?> converter;
 	private String header;
+	private String header2;
 	private int order;
 	private String format;
 	private String headerStyle;
@@ -60,5 +61,12 @@ public class Data {
 	}
 	public void setFormat(String format) {
 		this.format = format;
+	}
+	public String getHeader2() {
+		return header2;
+	}
+
+	public void setHeader2(String header2) {
+		this.header2 = header2;
 	}
 }

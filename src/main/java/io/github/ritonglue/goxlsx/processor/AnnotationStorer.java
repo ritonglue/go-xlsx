@@ -11,6 +11,7 @@ public class AnnotationStorer {
 	private final AttributeConverter<?,?> converter;
 	private final int order;
 	private final String header;
+	private final String header2;
 	private final String format;
 	private final Class<?> clazz;
 	private final Field field;
@@ -31,6 +32,7 @@ public class AnnotationStorer {
 	private AnnotationStorer(PropertyDescriptor pd, Field field, Data d) {
 		this.order = d.getOrder();
 		this.header = d.getHeader();
+		this.header2 = d.getHeader2();
 		if(pd != null) {
 			this.getter = pd.getReadMethod();
 			this.setter = pd.getWriteMethod();
@@ -74,6 +76,10 @@ public class AnnotationStorer {
 
 	public String getHeader() {
 		return header;
+	}
+
+	public String getHeader2() {
+		return header2;
 	}
 
 	public Class<?> getClazz() {
