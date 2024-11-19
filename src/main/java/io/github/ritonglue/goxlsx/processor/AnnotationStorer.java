@@ -19,6 +19,7 @@ public class AnnotationStorer {
 	private final Method setter;
 	private final int width;
 	private final String headerStyle;
+	private final String header2Style;
 	private final boolean isHidden;
 
 	public AnnotationStorer(Field field, Data d) {
@@ -50,6 +51,7 @@ public class AnnotationStorer {
 		Objects.requireNonNull(converter, "converter null: " + order);
 		this.format = d.getFormat();
 		this.headerStyle = d.getHeaderStyle();
+		this.header2Style = d.getHeader2Style();
 		this.width = d.getWidth();
 		this.isHidden = d.isHidden();
 	}
@@ -100,5 +102,9 @@ public class AnnotationStorer {
 
 	public boolean isHidden() {
 		return isHidden;
+	}
+
+	public String getHeader2Style() {
+		return header2Style;
 	}
 }

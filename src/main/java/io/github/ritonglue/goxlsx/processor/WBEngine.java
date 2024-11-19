@@ -360,7 +360,7 @@ public class WBEngine<T> {
 			new HashMap<>();
 	}
 
-		private Function<AnnotationStorer, Integer> getterIndex(Iterator<Row> iterator) {
+	private Function<AnnotationStorer, Integer> getterIndex(Iterator<Row> iterator) {
 		Function<AnnotationStorer, Integer> getterIndex = null;
 		switch(mode) {
 		case NAMED:
@@ -595,9 +595,9 @@ public class WBEngine<T> {
 			boolean hasHeader2 = false;
 			for(AnnotationStorer storer : storers) {
 				String header = storer.getHeader();
-				String header2 = storer.getHeader2();
 				if(!hasHeader2) {
-					hasHeader2 = header2 != null;
+					String header2 = storer.getHeader2();
+					hasHeader2 = header2 != null && !header2.isEmpty();
 				}
 				Cell cell = row.createCell(i++);
 				cell.setCellValue(header);
@@ -611,16 +611,17 @@ public class WBEngine<T> {
 				}
 			}
 			if(hasHeader2) {
+				CellStyle headerStyle2 = context.getStyle(context.getHeader2Style());
 				row = sheet.createRow(nrow++);
 				i = 0;
 				for(AnnotationStorer storer : storers) {
 					String header2 = storer.getHeader2();
 					Cell cell = row.createCell(i++);
 					cell.setCellValue(header2);
-					CellStyle style = context.getStyle(storer.getHeaderStyle());
+					CellStyle style = context.getStyle(storer.getHeader2Style());
 					if(style == null) {
 						//no style per column : apply general style
-						style = headerStyle;
+						style = headerStyle2;
 					}
 					if(style != null) {
 						cell.setCellStyle(style);

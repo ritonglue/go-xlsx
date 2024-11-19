@@ -9,6 +9,7 @@ public class Data {
 	private int order;
 	private String format;
 	private String headerStyle;
+	private String header2Style;
 	private int width;
 	private boolean isHidden;
 
@@ -32,6 +33,14 @@ public class Data {
 
 	public int getWidth() {
 		return width;
+	}
+
+	public String getHeader2Style() {
+		return header2Style;
+	}
+
+	public void setHeader2Style(String header2Style) {
+		this.header2Style = header2Style;
 	}
 
 	public void setWidth(int width) {
