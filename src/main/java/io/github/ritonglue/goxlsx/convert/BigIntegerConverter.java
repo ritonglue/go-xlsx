@@ -4,7 +4,7 @@ import java.math.BigInteger;
 
 /**
  * <p>
- * {@link AttributeConverter.g} implementation for <code>java.math.BigInteger</code> values.
+ * {@link AttributeConverter} implementation for <code>java.math.BigInteger</code> values.
  * </p>
  */
 
