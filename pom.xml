@@ -6,7 +6,7 @@
 
   <groupId>io.github.ritonglue</groupId>
   <artifactId>go-xlsx</artifactId>
-  <version>1.2.0</version>
+  <version>1.2.1-SNAPSHOT</version>
   <packaging>jar</packaging>
   <description>The go-xlsx library enables the use of annotation when for Excel files.</description>
 
@@ -132,7 +132,7 @@
     <plugin>
       <groupId>org.sonatype.plugins</groupId>
       <artifactId>nexus-staging-maven-plugin</artifactId>
-      <version>1.6.7</version>
+      <version>1.6.14</version>
       <extensions>true</extensions>
       <configuration>
          <serverId>ossrh</serverId>
