@@ -55,6 +55,7 @@ public class WBEngine<T> {
 	private final List<AnnotationStorer> storers = new ArrayList<>();
 	private final Map<Class<?>, AttributeConverter<?,?>> converters;
 	private final Map<CallbackEnum, Consumer<? super T>> callbacks = new EnumMap<>(CallbackEnum.class);
+	private final boolean hasHeader2;
 
 	public final static String DATE_FORMAT = "yyyy-mm-dd";
 	public final static String DATE_TIME_FORMAT = "yyyy-mm-dd hh:mm:ss";
@@ -105,6 +106,14 @@ public class WBEngine<T> {
 			this.converters.putAll(b.converters);
 		}
 		init();
+		boolean hasHeader2 = false;
+		for(AnnotationStorer storer : storers) {
+			String header2 = storer.getHeader2();
+			if(!hasHeader2) {
+				hasHeader2 = header2 != null && !header2.isEmpty();
+			}
+		}
+		this.hasHeader2 = hasHeader2;
 	}
 
 	public boolean isIgnoreHeaderCase() {
@@ -332,6 +341,10 @@ public class WBEngine<T> {
 	public Stream<T> parseAsStream(Sheet sheet) {
 		Iterator<Row> iterator = sheet.iterator();
 		Function<AnnotationStorer, Integer> getterIndex = getterIndex(iterator);
+		if(this.hasHeader2 && iterator.hasNext()) {
+			//skip header2
+			iterator.next();
+		}
 		Iterable<Row> iterable = () -> iterator;
 		return streamOf(iterable)
 				.filter(Objects::nonNull)
